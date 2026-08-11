@@ -136,10 +136,12 @@ HOLDINGS_CHUNK = 1000
 # Above this many chunks the restricted holdings leg costs more than it saves.
 MAX_HOLDINGS_CHUNKS = 25
 
-# Dune rejects any query over 500,000 characters. Each rendered address costs
-# ~43 of them, so 8,000 addresses is ~344k — comfortably inside the limit even
-# with the rest of the statement around it.
-TRADE_ADDRESS_CHUNK = 8_000
+# Dune rejects any query over 500,000 characters. index_trades_sql emits the
+# trader list TWICE — once against `taker`, once against `tx_from` — so each
+# address costs ~88 characters, not the ~44 it looks like. Measured: 8,000
+# addresses renders 706k chars and is rejected; 3,000 renders 266k. Keep the
+# margin, because the token list in the same statement grows too.
+TRADE_ADDRESS_CHUNK = 3_000
 # Slices for the trades leg. A month of index trades is ~500k rows at the $50
 # floor, which paginates in ~17 result pages — a comfortable single execution.
 TRADE_CHUNK_DAYS = 30
