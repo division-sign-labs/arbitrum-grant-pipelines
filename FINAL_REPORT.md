@@ -43,22 +43,33 @@ Start of this milestone was delayed to deconflict with Offchain Labs, which laun
 
 ### Deliverables
 
-- ArbSwap — a social trading miniapp recommending tokens based on the trading activity of a user's Farcaster mutual followers, focused on Clanker tokens to support Clanker's launch on Arbitrum. https://arbswap.trading
+ArbSwap, a social trading miniapp recommending tokens based on the trading activity of a user's Farcaster mutual followers, focused on Clanker tokens to support Clanker's launch on Arbitrum:
+
+https://arbswap.trading
+
 Building Farcaster Mini Apps on Arbitrum:
 
 https://paragraph.com/@quotient/building-farcaster-mini-apps-on-arbitrum
+
 How to Analyze Your Arbitrum Miniapp User Data with Quotient:
 
 https://paragraph.com/@quotient/how-to-analyze-your-arbitrum-miniapp-user-data-with-quotient
+
 Arbitrum Incentives for Miniapp Builders:
 
 https://paragraph.com/@quotient/arbitrum-incentives-for-miniapp-builders
-Where Liquidity Meets Virality: Building Games with Arbitrum + Farcaster:
+
+Where Liquidity Meets Virality, Building Games with Arbitrum + Farcaster:
 
 https://paragraph.com/@quotient/where-liquidity-meets-virality-building-games-with-arbitrum-farcaster
+
 Launch announcement:
 
 https://farcaster.xyz/quotient/0x93c5474e
+
+ArbSwap was recognised by the Arbitrum Foundation and Offchain Labs in the inaugural week of Arbitrum Miniapp Developer rewards:
+
+https://x.com/BFreshHB/status/1951302727742660890
 
 ### KPI Results
 
@@ -68,8 +79,6 @@ https://farcaster.xyz/quotient/0x93c5474e
 | Users completing an in-app swap from Base to Arbitrum | 17 |
 | Farcaster trending apps leaderboard | Peaked at #32 |
 | Articles published | 4 |
-
-ArbSwap was recognised by the Arbitrum Foundation and Offchain Labs in the inaugural week of Arbitrum Miniapp Developer rewards: https://x.com/BFreshHB/status/1951302727742660890
 
 ---
 
