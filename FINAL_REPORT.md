@@ -2,11 +2,11 @@
 
 ## Project Summary
 
-Quotient builds data analytics tools to help brands grow on Farcaster. This grant funded three things: content teaching developers how and why to build Arbitrum-integrated miniapps on Farcaster, data pipelines tracking Arbitrum ecosystem development on Farcaster, and a dashboard reporting on the drivers of that growth.
+Quotient is a social analytics company for traders. This grant funded three things: content teaching developers how and why to build Arbitrum-integrated miniapps on Farcaster, data pipelines tracking Arbitrum ecosystem development on Farcaster, and a dashboard reporting on the drivers of that growth.
 
 All three milestones are complete.
 
-**Funding ask:** 20,000 USD · **Milestones:** 3 · **Category:** Analytics
+Funding ask: 20,000 USD · Milestones: 3 · Category: Analytics
 
 | | |
 |---|---|
@@ -22,14 +22,18 @@ All three milestones are complete.
 
 Public links:
 
-- **Pipelines:** https://github.com/division-sign-labs/arbitrum-grant-pipelines
-- **Dashboard:** https://arb.quotient.social
+Pipelines:
+
+https://github.com/division-sign-labs/arbitrum-grant-pipelines
+Dashboard:
+
+https://arb.quotient.social
 
 ---
 
 ## Milestone 1 — Content Describing How and Why to Build on Arbitrum
 
-**3,000 USD**
+3,000 USD
 
 ### What Was Delivered
 
@@ -39,12 +43,22 @@ Start of this milestone was delayed to deconflict with Offchain Labs, which laun
 
 ### Deliverables
 
-- **ArbSwap** — a social trading miniapp recommending tokens based on the trading activity of a user's Farcaster mutual followers, focused on Clanker tokens to support Clanker's launch on Arbitrum. https://arbswap.trading
-- **Building Farcaster Mini Apps on Arbitrum** — https://paragraph.com/@quotient/building-farcaster-mini-apps-on-arbitrum
-- **How to Analyze Your Arbitrum Miniapp User Data with Quotient** — https://paragraph.com/@quotient/how-to-analyze-your-arbitrum-miniapp-user-data-with-quotient
-- **Arbitrum Incentives for Miniapp Builders** — https://paragraph.com/@quotient/arbitrum-incentives-for-miniapp-builders
-- **Where Liquidity Meets Virality: Building Games with Arbitrum + Farcaster** — https://paragraph.com/@quotient/where-liquidity-meets-virality-building-games-with-arbitrum-farcaster
-- **Launch announcement** — https://farcaster.xyz/quotient/0x93c5474e
+- ArbSwap — a social trading miniapp recommending tokens based on the trading activity of a user's Farcaster mutual followers, focused on Clanker tokens to support Clanker's launch on Arbitrum. https://arbswap.trading
+Building Farcaster Mini Apps on Arbitrum:
+
+https://paragraph.com/@quotient/building-farcaster-mini-apps-on-arbitrum
+How to Analyze Your Arbitrum Miniapp User Data with Quotient:
+
+https://paragraph.com/@quotient/how-to-analyze-your-arbitrum-miniapp-user-data-with-quotient
+Arbitrum Incentives for Miniapp Builders:
+
+https://paragraph.com/@quotient/arbitrum-incentives-for-miniapp-builders
+Where Liquidity Meets Virality: Building Games with Arbitrum + Farcaster:
+
+https://paragraph.com/@quotient/where-liquidity-meets-virality-building-games-with-arbitrum-farcaster
+Launch announcement:
+
+https://farcaster.xyz/quotient/0x93c5474e
 
 ### KPI Results
 
@@ -61,7 +75,7 @@ ArbSwap was recognised by the Arbitrum Foundation and Offchain Labs in the inaug
 
 ## Milestone 2 — Data Pipelines Tracking Arbitrum Ecosystem Development
 
-**8,250 USD**
+8,250 USD
 
 ### What Was Delivered
 
@@ -71,17 +85,17 @@ Every pipeline can rebuild from scratch or update incrementally, writes CSV outp
 
 ### Deliverables
 
-- **`linked_wallets`** — every Farcaster account, its verified wallets, its reputation score
-- **`contract_deployers`** — every Arbitrum contract deployment traced to a Farcaster account, with on-chain activity. Deployments made through a factory contract are credited to the person, not the factory
-- **`miniapp_builders`** — miniapp builders and their Arbitrum activity
-- **`brand_engagement`** — replies, likes, recasts and mentions directed at Arbitrum's accounts, plus full /arbitrum channel coverage, with weighted scoring
-- **`clanker_tokens` and `bankr_tokens`** — token launches on Arbitrum and Robinhood Chain, with the account behind each launch and per-token trading volume
-- **`token_buyers`** — purchases of $50 or more, matched to Farcaster accounts
-- **`token_evangelists`** — purchases traced to the posts that influenced them
-- **`popular_tokens`** — trades, holdings, Gauntlet vault deposits and Uniswap liquidity for ARB, PENDLE and Layer3
-- **`arb_cohort`** — the combined list of wallets active on Arbitrum
-- **`hyperliquid_activity`** — lifetime trading volume and first trade date per wallet
-- **Neo4j graph, loaders, orchestrator, 486 tests, and documentation**
+- linked_wallets — every Farcaster account, its verified wallets, its reputation score
+- contract_deployers — every Arbitrum contract deployment traced to a Farcaster account, with on-chain activity. Deployments made through a factory contract are credited to the person, not the factory
+- miniapp_builders — miniapp builders and their Arbitrum activity
+- brand_engagement — replies, likes, recasts and mentions directed at Arbitrum's accounts, plus full /arbitrum channel coverage, with weighted scoring
+- clanker_tokens and bankr_tokens — token launches on Arbitrum and Robinhood Chain, with the account behind each launch and per-token trading volume
+- token_buyers — purchases of $50 or more, matched to Farcaster accounts
+- token_evangelists — purchases traced to the posts that influenced them
+- popular_tokens — trades, holdings, Gauntlet vault deposits and Uniswap liquidity for ARB, PENDLE and Layer3
+- arb_cohort — the combined list of wallets active on Arbitrum
+- hyperliquid_activity — lifetime trading volume and first trade date per wallet
+- Neo4j graph, loaders, orchestrator, 486 tests, and documentation
 
 ### KPI Results
 
@@ -111,13 +125,13 @@ Detail by category:
 
 ### Links
 
-- **Repository:** https://github.com/division-sign-labs/arbitrum-grant-pipelines
+https://github.com/division-sign-labs/arbitrum-grant-pipelines
 
 ---
 
 ## Milestone 3 — Dashboard for Monitoring Arbitrum Ecosystem Growth on Farcaster
 
-**8,750 USD**
+8,750 USD
 
 ### What Was Delivered
 
@@ -125,12 +139,12 @@ A dashboard reporting on the drivers of Arbitrum ecosystem growth on Farcaster, 
 
 ### Deliverables
 
-- **Accounts** — Farcaster accounts active on Arbitrum, ranked by activity and reputation
-- **Engagement** — engagement with Arbitrum's accounts and the /arbitrum channel
-- **Growth** — activity over time, including monthly casts, engagements and distinct authors
-- **Protocols** — activity across Arbitrum ecosystem protocols including Hyperliquid
-- **Tokens** — token launches, purchases, and the posts associated with them
-- **Snapshot mode** — the dashboard runs against a committed data snapshot without graph credentials
+- Accounts — Farcaster accounts active on Arbitrum, ranked by activity and reputation
+- Engagement — engagement with Arbitrum's accounts and the /arbitrum channel
+- Growth — activity over time, including monthly casts, engagements and distinct authors
+- Protocols — activity across Arbitrum ecosystem protocols including Hyperliquid
+- Tokens — token launches, purchases, and the posts associated with them
+- Snapshot mode — the dashboard runs against a committed data snapshot without graph credentials
 
 ### KPI Results
 
@@ -141,8 +155,9 @@ A dashboard reporting on the drivers of Arbitrum ecosystem growth on Farcaster, 
 
 ### Links
 
-- **Dashboard:** https://arb.quotient.social
-- **Repository:** https://github.com/division-sign-labs/arbitrum-grant-dashboard
+https://arb.quotient.social
+
+https://github.com/division-sign-labs/arbitrum-grant-dashboard
 
 ---
 
@@ -153,19 +168,19 @@ A dashboard reporting on the drivers of Arbitrum ecosystem growth on Farcaster, 
 | M1 | Content describing how and why to build on Arbitrum | 3,000 USD | Complete |
 | M2 | Data pipelines tracking Arbitrum ecosystem development | 8,250 USD | Complete |
 | M3 | Dashboard for monitoring Arbitrum ecosystem growth | 8,750 USD | Complete |
-| | **Total** | **20,000 USD** | |
+| | Total | 20,000 USD | |
 
 ---
 
 ## Findings
 
-**Miniapp builders trade significant volume on Arbitrum ecosystem protocols.** The 68 miniapp builders tracked hold wallets with $183,281,830 in lifetime Hyperliquid volume. Arbitrum ecosystem posters and brand engagers account for $202,172,797. These groups overlap, so the figures are not additive.
+Miniapp builders trade significant volume on Arbitrum ecosystem protocols. The 68 miniapp builders tracked hold wallets with $183,281,830 in lifetime Hyperliquid volume. Arbitrum ecosystem posters and brand engagers account for $202,172,797. These groups overlap, so the figures are not additive.
 
-**Farcaster accounts deploying contracts on Arbitrum are a small but identifiable group.** Of 373,565 addresses that deployed a contract on Arbitrum, 2,076 belong to Farcaster accounts. 333 of those score above 0.6 on reputation.
+Farcaster accounts deploying contracts on Arbitrum are a small but identifiable group. Of 373,565 addresses that deployed a contract on Arbitrum, 2,076 belong to Farcaster accounts. 333 of those score above 0.6 on reputation.
 
-**Most token launch activity sits on Robinhood Chain rather than Arbitrum One.** Robinhood Chain, an Arbitrum Orbit chain launched in July 2026, carries 67,086 of the 67,670 tokens tracked.
+Most token launch activity sits on Robinhood Chain rather than Arbitrum One. Robinhood Chain, an Arbitrum Orbit chain launched in July 2026, carries 67,086 of the 67,670 tokens tracked.
 
-**Posting drives little measurable purchase volume.** 573 posts about tracked tokens produced 29 purchases traceable to a post, totalling $144.85. A purchase counts as influenced when the buyer engaged with a post about that token within five days of buying.
+Posting drives little measurable purchase volume. 573 posts about tracked tokens produced 29 purchases traceable to a post, totalling $144.85. A purchase counts as influenced when the buyer engaged with a post about that token within five days of buying.
 
 ---
 
@@ -181,29 +196,75 @@ Near the end of the grant we shifted focus to prediction market analytics, where
 
 ## Team
 
-| Name | Role | Links |
-|---|---|---|
-| Jordan Olmstead | Product / Data | [LinkedIn](https://www.linkedin.com/in/jordan-o-5b5845128/) · [Farcaster](https://warpcast.com/ruminations) · [GitHub](https://github.com/jchanolm) |
-| Steve Simkins | Content / DevRel | [LinkedIn](https://www.linkedin.com/in/steve-simkins/) · [Farcaster](https://warpcast.com/stevedylandev.eth) · [GitHub](https://github.com/stevedylandev) · [X](https://x.com/stevedylandev) |
-| Francisco Pablo Marengo | Data Analytics / Research | [LinkedIn](https://www.linkedin.com/in/francisco-pablo-marengo-103165239) |
+Jordan Olmstead — Product / Data
+
+https://www.linkedin.com/in/jordan-o-5b5845128/
+
+https://warpcast.com/ruminations
+
+https://github.com/jchanolm
+
+Steve Simkins — Content / DevRel
+
+https://www.linkedin.com/in/steve-simkins/
+
+https://warpcast.com/stevedylandev.eth
+
+https://github.com/stevedylandev
+
+https://x.com/stevedylandev
+
+Francisco Pablo Marengo — Data Analytics / Research
+
+https://www.linkedin.com/in/francisco-pablo-marengo-103165239
 
 ---
 
 ## Key Links
 
-| Resource | URL |
-|---|---|
-| Website | https://usequotient.xyz |
-| Dashboard | https://arb.quotient.social |
-| Pipelines repository | https://github.com/division-sign-labs/arbitrum-grant-pipelines |
-| Dashboard repository | https://github.com/division-sign-labs/arbitrum-grant-dashboard |
-| ArbSwap miniapp | https://arbswap.trading |
-| Building Farcaster Mini Apps on Arbitrum | https://paragraph.com/@quotient/building-farcaster-mini-apps-on-arbitrum |
-| How to Analyze Your Arbitrum Miniapp User Data | https://paragraph.com/@quotient/how-to-analyze-your-arbitrum-miniapp-user-data-with-quotient |
-| Arbitrum Incentives for Miniapp Builders | https://paragraph.com/@quotient/arbitrum-incentives-for-miniapp-builders |
-| Building Games with Arbitrum + Farcaster | https://paragraph.com/@quotient/where-liquidity-meets-virality-building-games-with-arbitrum-farcaster |
-| Budget breakdown | https://docs.google.com/spreadsheets/d/1ZCnZs5iSpWN2mzMVrcXFefNTN-SDF9gjPM6gS_PfIiw/edit |
-| GitHub organisation | https://github.com/jchanolm |
+Website:
+
+https://usequotient.xyz
+
+Dashboard:
+
+https://arb.quotient.social
+
+Pipelines repository:
+
+https://github.com/division-sign-labs/arbitrum-grant-pipelines
+
+Dashboard repository:
+
+https://github.com/division-sign-labs/arbitrum-grant-dashboard
+
+ArbSwap miniapp:
+
+https://arbswap.trading
+
+Building Farcaster Mini Apps on Arbitrum:
+
+https://paragraph.com/@quotient/building-farcaster-mini-apps-on-arbitrum
+
+How to Analyze Your Arbitrum Miniapp User Data:
+
+https://paragraph.com/@quotient/how-to-analyze-your-arbitrum-miniapp-user-data-with-quotient
+
+Arbitrum Incentives for Miniapp Builders:
+
+https://paragraph.com/@quotient/arbitrum-incentives-for-miniapp-builders
+
+Building Games with Arbitrum + Farcaster:
+
+https://paragraph.com/@quotient/where-liquidity-meets-virality-building-games-with-arbitrum-farcaster
+
+Budget breakdown:
+
+https://docs.google.com/spreadsheets/d/1ZCnZs5iSpWN2mzMVrcXFefNTN-SDF9gjPM6gS_PfIiw/edit
+
+GitHub:
+
+https://github.com/jchanolm
 
 ---
 
