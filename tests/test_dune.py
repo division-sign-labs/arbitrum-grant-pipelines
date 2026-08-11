@@ -26,6 +26,7 @@ EXECUTE_URL = f"{DUNE_API_BASE}/query/{QUERY_ID}/execute"
 STATUS_URL = f"{DUNE_API_BASE}/execution/{EXEC_ID}/status"
 RESULTS_URL = f"{DUNE_API_BASE}/execution/{EXEC_ID}/results/csv"
 ARCHIVE_URL = f"{DUNE_API_BASE}/query/{QUERY_ID}/archive"
+PATCH_URL = f"{DUNE_API_BASE}/query/{QUERY_ID}"
 
 
 # --- prepare_sql ---------------------------------------------------------
@@ -88,6 +89,8 @@ def register_happy_path(m, statuses=None, results=None):
 
     m.get(RESULTS_URL, text=paginate)
     m.post(ARCHIVE_URL, json={})
+    # Subsequent run_sql calls rewrite the scratch query rather than create one.
+    m.patch(PATCH_URL, json={})
 
 
 def runner(tmp_path, **kwargs) -> DuneRunner:
@@ -126,7 +129,7 @@ def test_the_api_key_is_sent_as_a_header(tmp_path, requests_mock, recorded_sleep
 # --- the execution choreography -----------------------------------------
 
 
-def test_run_sql_creates_polls_fetches_and_archives(tmp_path, requests_mock, recorded_sleep):
+def test_run_sql_creates_executes_polls_and_fetches(tmp_path, requests_mock, recorded_sleep):
     register_happy_path(
         requests_mock,
         statuses=["QUERY_STATE_PENDING", "QUERY_STATE_EXECUTING", "QUERY_STATE_COMPLETED"],
@@ -145,16 +148,47 @@ def test_run_sql_creates_polls_fetches_and_archives(tmp_path, requests_mock, rec
     assert [c for c in calls if c[1].endswith("/status")] == [
         ("GET", f"/api/v1/execution/{EXEC_ID.lower()}/status")
     ] * 3
-    assert calls[-1] == ("POST", f"/api/v1/query/{QUERY_ID}/archive")
+    # Archiving is deferred to close(): the scratch query is reused across calls.
+    assert not any(c[1].endswith("/archive") for c in calls)
 
     # Two non-terminal polls -> two waits of DUNE_POLL_SECONDS.
     assert recorded_sleep == [dune.DUNE_POLL_SECONDS, dune.DUNE_POLL_SECONDS]
 
-    # The query is created private and with the semicolon already stripped.
     created = requests_mock.request_history[0].json()
-    assert created["is_private"] is True
     assert created["query_sql"] == "SELECT address, n FROM t"
-    assert "deployers" in created["name"]
+
+
+def test_a_second_query_patches_the_scratch_query_instead_of_creating_one(
+    tmp_path, requests_mock, recorded_sleep
+):
+    # Dune caps how many saved queries an account may hold ("Max number of
+    # private queries reached"), and a backfill is thousands of executions, so
+    # creating one per execution stops the run regardless of compute budget.
+    register_happy_path(requests_mock, results=[_csv(1)])
+    runner_ = runner(tmp_path)
+
+    runner_.run_sql("SELECT 1 AS a", label="first")
+    runner_.run_sql("SELECT 2 AS b", label="second")
+
+    creates = [r for r in requests_mock.request_history if r.method == "POST" and r.path == "/api/v1/query"]
+    patches = [r for r in requests_mock.request_history if r.method == "PATCH"]
+    assert len(creates) == 1
+    assert len(patches) == 1
+    assert patches[0].json()["query_sql"] == "SELECT 2 AS b"
+    assert runner_._query_id == QUERY_ID
+
+
+def test_close_archives_the_scratch_query_once(tmp_path, requests_mock, recorded_sleep):
+    register_happy_path(requests_mock, results=[_csv(1)])
+    runner_ = runner(tmp_path)
+    runner_.run_sql("SELECT 1")
+
+    runner_.close()
+    runner_.close()  # idempotent: nothing left to archive
+
+    archives = [r for r in requests_mock.request_history if r.path.endswith("/archive")]
+    assert len(archives) == 1
+    assert runner_._query_id is None
 
 
 def test_run_sql_applies_limit_as_a_real_but_tiny_execution(tmp_path, requests_mock, recorded_sleep):
@@ -165,16 +199,22 @@ def test_run_sql_applies_limit_as_a_real_but_tiny_execution(tmp_path, requests_m
     assert requests_mock.request_history[0].json()["query_sql"].endswith("LIMIT 3")
 
 
-def test_a_failed_execution_raises_and_still_archives(tmp_path, requests_mock, recorded_sleep):
+def test_a_failed_execution_raises_and_leaves_the_scratch_query_reusable(
+    tmp_path, requests_mock, recorded_sleep
+):
     requests_mock.post(CREATE_URL, json={"query_id": QUERY_ID})
     requests_mock.post(EXECUTE_URL, json={"execution_id": EXEC_ID})
     requests_mock.get(STATUS_URL, json={"state": "QUERY_STATE_FAILED", "error": {"type": "SYNTAX"}})
     requests_mock.post(ARCHIVE_URL, json={})
+    requests_mock.patch(PATCH_URL, json={})
+    runner_ = runner(tmp_path)
 
     with pytest.raises(DuneError, match="QUERY_STATE_FAILED"):
-        runner(tmp_path).run_sql("SELECT bad")
+        runner_.run_sql("SELECT bad")
 
-    assert requests_mock.request_history[-1].path.endswith("/archive")
+    # One leg failing must not discard the scratch query: popular_tokens runs
+    # four independent legs through one runner and the later ones still need it.
+    assert runner_._query_id == QUERY_ID
 
 
 def test_polling_gives_up_at_the_deadline(tmp_path, requests_mock, monkeypatch, recorded_sleep):

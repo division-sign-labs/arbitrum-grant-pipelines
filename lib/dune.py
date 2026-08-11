@@ -16,6 +16,7 @@ import hashlib
 import io
 import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Any
@@ -67,6 +68,13 @@ class DuneRunner:
         self.cache_ttl_seconds = cache_ttl_hours * 3600
         self.cache_dir = Path(cache_dir or (DATA_DIR / ".dune_cache"))
         self.dry_run = dry_run
+        # Public by default: this account's plan caps private queries, and the
+        # scratch query only ever holds SQL we would be happy to publish (token
+        # addresses and public Farcaster verification addresses).
+        self.private_queries = (
+            os.environ.get("DUNE_PRIVATE_QUERIES", "false").lower() == "true"
+        )
+        self._query_id: int | None = None
         self.executions: list[dict] = []
         self.session = requests.Session()
         if self.api_key:
@@ -166,13 +174,10 @@ class DuneRunner:
                 return cached
 
         started = time.time()
-        query_id = self._create_query(label, sql)
-        try:
-            execution_id = self._execute(query_id, performance or self.performance)
-            self._wait(execution_id, label)
-            df = self._fetch_results(execution_id)
-        finally:
-            self._archive_query(query_id)
+        query_id = self._scratch_query(label, sql)
+        execution_id = self._execute(query_id, performance or self.performance)
+        self._wait(execution_id, label)
+        df = self._fetch_results(execution_id)
 
         elapsed = time.time() - started
         self.executions.append(
@@ -190,17 +195,49 @@ class DuneRunner:
             self._write_cache(sql, df)
         return df
 
-    def _create_query(self, label: str, sql: str) -> int:
-        response = self._request(
-            "POST",
-            "/query",
-            json={
-                "name": f"[arbitrum-grant-pipelines] {label}",
-                "query_sql": sql,
-                "is_private": True,
-            },
+    def _scratch_query(self, label: str, sql: str) -> int:
+        """One reusable query per runner, its SQL rewritten before each execution.
+
+        Creating a query per execution burns Dune's saved-query allowance — a
+        long backfill is thousands of executions, and accounts cap the number of
+        private queries ("Max number of private queries reached"), which stops
+        the run dead no matter how much compute budget is left. Archiving after
+        each run does not give the slot back.
+
+        So the runner creates exactly one query and PATCHes its SQL thereafter.
+        """
+        if self._query_id is None:
+            response = self._request(
+                "POST",
+                "/query",
+                json={
+                    "name": "[arbitrum-grant-pipelines] scratch",
+                    "query_sql": sql,
+                    "is_private": self.private_queries,
+                },
+            )
+            self._query_id = response.json()["query_id"]
+            logger.info("dune: created scratch query %s", self._query_id)
+            return self._query_id
+
+        self._request(
+            "PATCH",
+            f"/query/{self._query_id}",
+            json={"query_sql": sql, "name": f"[arbitrum-grant-pipelines] {label}"},
         )
-        return response.json()["query_id"]
+        return self._query_id
+
+    def close(self) -> None:
+        """Archive the scratch query so it does not linger in the query list."""
+        if self._query_id is not None:
+            self._archive_query(self._query_id)
+            self._query_id = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
     def _execute(self, query_id: int, performance: str) -> str:
         response = self._request(
