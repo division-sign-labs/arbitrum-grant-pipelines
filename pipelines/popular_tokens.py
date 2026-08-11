@@ -135,6 +135,11 @@ OUTPUTS = {
 HOLDINGS_CHUNK = 1000
 # Above this many chunks the restricted holdings leg costs more than it saves.
 MAX_HOLDINGS_CHUNKS = 25
+
+# Dune rejects any query over 500,000 characters. Each rendered address costs
+# ~43 of them, so 8,000 addresses is ~344k — comfortably inside the limit even
+# with the rest of the statement around it.
+TRADE_ADDRESS_CHUNK = 8_000
 # Slices for the trades leg. A month of index trades is ~500k rows at the $50
 # floor, which paginates in ~17 result pages — a comfortable single execution.
 TRADE_CHUNK_DAYS = 30
@@ -185,6 +190,45 @@ def _load_wallet_map(run_id: str | None, allow_missing: bool) -> dict[str, int]:
             "linked_wallets produced no eth addresses; nothing to join against."
         )
     return mapping
+
+
+def _load_cohort_map(run_id: str | None, allow_missing: bool) -> dict[str, int]:
+    """{address: fid} from an arb_cohort run — the affordable wallet set.
+
+    The full linked_wallets map is ~4.7M addresses, which forces every leg to
+    either scan the whole chain and filter locally (millions of result rows) or
+    chunk into thousands of Dune queries. Neither fits a datapoint budget.
+
+    The cohort is the ~30k wallets already known to do something on Arbitrum, so
+    restricting to it costs tens of queries instead of thousands. The narrowing
+    is real and deliberate: a Farcaster user who holds ARB but has never
+    deployed, launched or bought anything is not in the cohort and will not be
+    counted. That is a cost/coverage trade the operator opts into, and it is
+    recorded on the run manifest so nobody mistakes it for full coverage.
+    """
+    from lib.runs import read_csv
+
+    try:
+        df = read_csv("arb_cohort", "cohort", run_id=run_id)
+    except FileNotFoundError as exc:
+        if not allow_missing:
+            raise SystemExit(
+                f"{exc}\nRun `python -m pipelines.arb_cohort --backfill` first, or "
+                f"pass --wallet-source linked_wallets."
+            ) from exc
+        logger.warning("no arb_cohort run (%s); continuing with an empty map", exc)
+        return {}
+
+    if df.empty:
+        return {}
+    df = df.copy()
+    df["address"] = df["address"].astype(str).str.strip().str.lower()
+    df = df[df["address"].str.startswith("0x")]
+    fids = pd.to_numeric(df.get("fid"), errors="coerce")
+    return {
+        addr: (int(fid) if pd.notna(fid) else None)
+        for addr, fid in zip(df["address"], fids)
+    }
 
 
 def _wallet_map_from_csv(run_id: str | None) -> dict[str, int]:
@@ -296,26 +340,42 @@ def leg_trades(
     step = timedelta(days=max(1, int(args.trade_chunk_days)))
 
     restrict = sorted(wallets) if args.restrict == "always" and wallets else None
+    # A 20-byte address renders to ~43 characters, so an unchunked IN-list of the
+    # whole cohort is ~1.3MB and Dune rejects the query at 500k characters. Split
+    # the address list so each rendered query stays well under that ceiling; the
+    # extra executions are nearly free because each returns only matching rows.
+    address_batches: list[list[str] | None] = [None]
     if restrict:
-        logger.info("trades: restricting to %d wallets on the Dune side", len(restrict))
+        address_batches = list(chunked(restrict, TRADE_ADDRESS_CHUNK))
+        logger.info(
+            "trades: restricting to %d wallets on the Dune side, in %d address batches",
+            len(restrict),
+            len(address_batches),
+        )
 
     frames: list[pd.DataFrame] = []
     slice_start = since
     slices = 0
     while slice_start < end:
         slice_end = min(slice_start + step, end)
-        sql = index_trades_sql(
-            index_addresses,
-            slice_start,
-            until=slice_end,
-            min_amount_usd=args.min_trade_usd,
-            trader_addresses=restrict,
-        )
-        raw = dune.run_sql(
-            sql,
-            label=f"index trades {slice_start:%Y-%m-%d}",
-            limit=args.limit,
-        )
+        raw_parts: list[pd.DataFrame] = []
+        for batch_index, batch in enumerate(address_batches, start=1):
+            sql = index_trades_sql(
+                index_addresses,
+                slice_start,
+                until=slice_end,
+                min_amount_usd=args.min_trade_usd,
+                trader_addresses=batch,
+            )
+            suffix = f" [{batch_index}/{len(address_batches)}]" if len(address_batches) > 1 else ""
+            part = dune.run_sql(
+                sql,
+                label=f"index trades {slice_start:%Y-%m-%d}{suffix}",
+                limit=args.limit,
+            )
+            if not part.empty:
+                raw_parts.append(part)
+        raw = pd.concat(raw_parts, ignore_index=True) if raw_parts else pd.DataFrame()
         slices += 1
         if not raw.empty:
             matched = _attach_fid(raw, wallets, "taker_address", "tx_from_address")
@@ -572,7 +632,16 @@ def run(window, args) -> dict:
         "%s: %d index tokens, legs=%s", PIPELINE, len(index_addresses), ",".join(selected)
     )
 
-    wallets = _load_wallet_map(args.wallets_run_id, allow_missing=args.dry_run)
+    notes: list[str] = []
+    if args.wallet_source == "arb_cohort":
+        wallets = _load_cohort_map(args.wallets_run_id, allow_missing=args.dry_run)
+        logger.info("wallet source: arb_cohort (%d addresses)", len(wallets))
+        notes.append(
+            f"wallet set restricted to the arb_cohort run ({len(wallets)} addresses); "
+            "Farcaster wallets outside the Arbitrum cohort are not covered"
+        )
+    else:
+        wallets = _load_wallet_map(args.wallets_run_id, allow_missing=args.dry_run)
     dune = DuneRunner(dry_run=args.dry_run)
     writer = RunWriter(DATA_TYPE, dry_run=args.dry_run)
 
@@ -583,7 +652,6 @@ def run(window, args) -> dict:
         "lp": lambda: leg_lp(dune, wallets, window, args, index_addresses),
     }
 
-    notes: list[str] = []
     degraded: list[str] = []
     results: dict[str, pd.DataFrame] = {}
 
@@ -729,7 +797,18 @@ def main(argv=None):
     parser.add_argument(
         "--wallets-run-id",
         default=None,
-        help="linked_wallets run to join against (default: the latest completed run).",
+        help="Run id of the wallet source to join against (default: its latest run).",
+    )
+    parser.add_argument(
+        "--wallet-source",
+        choices=("linked_wallets", "arb_cohort"),
+        default="linked_wallets",
+        help=(
+            "Which wallet set to join against. 'linked_wallets' is all ~4.7M "
+            "Farcaster addresses (full coverage, needs a large datapoint budget); "
+            "'arb_cohort' is the ~30k already-Arbitrum-active wallets, which makes "
+            "every leg restrictable and costs orders of magnitude less."
+        ),
     )
     args = parser.parse_args(argv)
 
