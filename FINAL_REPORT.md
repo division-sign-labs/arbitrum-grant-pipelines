@@ -98,12 +98,13 @@ Accounts measured: `@arbitrum`, `@offchainlabs`.
 
 ## Milestone 4 — Token Launches and Buyers
 
-Who launches tokens on Arbitrum and Robinhood Chain, who buys them, and which posts led to purchases.
+Who launches tokens on Arbitrum and on Robinhood Chain, who buys them, and which posts led to purchases.
+
+Robinhood Chain is an Arbitrum Orbit chain that launched in July 2026. Most token activity we found sits there rather than on Arbitrum itself.
 
 **Deliverables**
 
-- `clanker_tokens` pipeline — tokens launched on Arbitrum, with the Farcaster account that launched them
-- `bankr_tokens` pipeline — tokens launched on Robinhood Chain, with trading volume per token
+- Token registry for Arbitrum and Robinhood Chain, with the account behind each launch and per-token trading volume
 - `token_buyers` pipeline — purchases of $50 or more, matched to Farcaster accounts
 - `token_evangelists` pipeline — purchases traced back to the posts that influenced them
 
@@ -112,8 +113,8 @@ Who launches tokens on Arbitrum and Robinhood Chain, who buys them, and which po
 | | |
 |---|---|
 | Tokens tracked | 67,670 |
-| On Arbitrum (Clanker) | 565 |
-| On Robinhood Chain (Bankr) | 67,086 |
+| On Robinhood Chain | 67,086 |
+| On Arbitrum | 565 |
 | Distinct launchers identified | 15,047 |
 | Fee recipients identified | 23,585 |
 | Purchases of $50 or more | 189 |
@@ -237,7 +238,7 @@ Near the end of the grant we shifted focus to prediction market analytics, where
 
 ## Appendix — Activity by Month
 
-| Month | Contract deploys | /arbitrum posts | Brand engagements | Token launches |
+| Month | Contract deploys | /arbitrum posts | Brand engagements | Arbitrum token launches |
 |---|---|---|---|---|
 | 2025-01 | 1,089 | 243 | 381 | 0 |
 | 2025-02 | 741 | 146 | 11 | 0 |
