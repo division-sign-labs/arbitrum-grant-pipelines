@@ -1,0 +1,41 @@
+{
+  "userRateLimit": {
+    "cumVlm": "1234567.89",
+    "nRequestsUsed": 4210,
+    "nRequestsCap": 25691358
+  },
+  "userRateLimit_never_traded": {
+    "cumVlm": "0.0",
+    "nRequestsUsed": 0,
+    "nRequestsCap": 0
+  },
+  "userNonFundingLedgerUpdates": [
+    {
+      "time": 1735689600000,
+      "hash": "0x6c1f0a9e5d4b3c2a1908f7e6d5c4b3a2918273645566778899aabbccddeeff00",
+      "delta": {
+        "type": "deposit",
+        "usdc": "500.0"
+      }
+    },
+    {
+      "time": 1704067200000,
+      "hash": "0x11aa22bb33cc44dd55ee66ff778899001122334455667788990011223344556677",
+      "delta": {
+        "type": "accountClassTransfer",
+        "usdc": "250.0",
+        "toPerp": true
+      }
+    },
+    {
+      "time": 1767225600000,
+      "hash": "0x99887766554433221100ffeeddccbbaa99887766554433221100ffeeddccbbaa",
+      "delta": {
+        "type": "withdraw",
+        "usdc": "100.0",
+        "nonce": 1767225600000,
+        "fee": "1.0"
+      }
+    }
+  ]
+}

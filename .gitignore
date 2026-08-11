@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- arbitrum-grant-pipelines ---
+# The stock Python .gitignore ignores lib/ (virtualenv layout). Ours is source.
+!lib/
+!lib/**
+# Pipeline outputs and watermarks are local artifacts, not source.
+data/
+state/
+!data/.gitkeep

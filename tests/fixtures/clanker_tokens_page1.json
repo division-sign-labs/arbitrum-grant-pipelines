@@ -1,0 +1,68 @@
+{
+  "data": [
+    {
+      "id": 118804,
+      "contract_address": "0x3192583D06e805D966737797D72F6A7B50FCF069",
+      "chain_id": 42161,
+      "name": "test",
+      "symbol": "TEST",
+      "img_url": null,
+      "type": "clanker_v4",
+      "pool_address": "0x5b01c88050cfe90fc9023f862fbd661878689e35bf42478499d9cacfd345303b",
+      "tx_hash": "0x29B8ED1081E47562CDD7F5D910BEB3A27296207409368C9D60F1DFF99167F3EE",
+      "msg_sender": "0x1B85596A595D330AE7B0D837E77BC5101CA8A32A",
+      "admin": "0x1b85596a595d330ae7b0d837e77bc5101ca8a32a",
+      "created_at": "2026-08-05T05:19:41.117Z",
+      "deployed_at": "2026-08-05T05:19:40.000Z",
+      "starting_market_cap": 9.870869513221747,
+      "priceUsd": 0.0,
+      "pool_config": {
+        "pairedToken": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+        "tickIfToken0IsClanker": -230400,
+        "tickSpacing": 200
+      },
+      "related": {
+        "user": {
+          "fid": 194,
+          "username": "rish",
+          "display_name": "rish",
+          "follower_count": 291045
+        },
+        "market": {
+          "marketCap": 0.0,
+          "volume24h": 0,
+          "priceUsd": 0.0
+        }
+      }
+    },
+    {
+      "id": 118803,
+      "contract_address": "0xB52A72A30E6DA051A00F77015DF73C940C2A43C2",
+      "chain_id": 42161,
+      "name": "Arb Parity Test",
+      "symbol": "ARBTEST",
+      "type": "clanker_v4",
+      "pool_address": "0x6362fc7619486fb44177eb3e4f1572336d0c6521518734653e85cd17a4c11d7e",
+      "tx_hash": "0x3a76cce6b1d99c54278d85559da9568dab5f17c8322ef34a034ba0f59ca47717",
+      "msg_sender": "0x3B5AEDD9AB921E592D2FCCAA6E33CF893E7EEB70",
+      "admin": "0x3b5aedd9ab921e592d2fccaa6e33cf893e7eeb70",
+      "created_at": "2026-08-05T04:49:57.402Z",
+      "deployed_at": "2026-08-05T04:49:56.000Z",
+      "starting_market_cap": 9.870869513221747,
+      "priceUsd": 0.0,
+      "pool_config": {
+        "pairedToken": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"
+      },
+      "related": {
+        "user": null,
+        "market": {
+          "marketCap": 0.0,
+          "volume24h": 0
+        }
+      }
+    }
+  ],
+  "cursor": "eyJkZXBsb3llZF9hdCI6IjIwMjYtMDgtMDVUMDQ6NDk6NTYuMDAwWiJ9",
+  "total": 565,
+  "hasMore": true
+}

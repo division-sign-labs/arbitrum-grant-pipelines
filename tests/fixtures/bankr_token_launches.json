@@ -1,0 +1,48 @@
+{
+  "launches": [
+    {
+      "tokenAddress": "0x4A1F9C2E0B7D6853A9E1C0F2B3D45566778899AA",
+      "tokenName": "Bankr Bot",
+      "tokenSymbol": "BNKR",
+      "chain": "robinhood",
+      "timestamp": 1770000000000,
+      "txHash": "0xAB12CD34EF567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890",
+      "poolId": "0xFEDCBA9876543210FEDCBA9876543210FEDCBA9876543210FEDCBA9876543210",
+      "launchType": "doppler",
+      "status": "graduated",
+      "deployer": {
+        "walletAddress": "0x9F8E7D6C5B4A39281706F5E4D3C2B1A099887766",
+        "xUsername": "bankrbot"
+      },
+      "feeRecipient": {
+        "walletAddress": "0x1122334455667788990011223344556677889900"
+      }
+    },
+    {
+      "tokenAddress": "0x8899aabbccddeeff00112233445566778899aabb",
+      "tokenName": "Base Side Launch",
+      "tokenSymbol": "BASE1",
+      "chain": "base",
+      "timestamp": 1769999000000,
+      "txHash": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "poolId": "",
+      "launchType": "clanker",
+      "status": "live",
+      "deployer": {
+        "walletAddress": "",
+        "xUsername": null
+      }
+    },
+    {
+      "tokenAddress": "0x0011223344556677889900112233445566778899",
+      "tokenName": "Unknown Chain Token",
+      "tokenSymbol": "UNK",
+      "chain": "SomeNewChain",
+      "timestamp": null,
+      "txHash": null,
+      "launchType": "doppler",
+      "status": "pending",
+      "deployer": null
+    }
+  ]
+}

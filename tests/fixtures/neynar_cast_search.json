@@ -1,0 +1,76 @@
+{
+  "page1": {
+    "result": {
+      "casts": [
+        {
+          "object": "cast",
+          "hash": "0xa1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+          "parent_hash": null,
+          "parent_url": null,
+          "root_parent_url": "https://warpcast.com/~/channel/arbitrum",
+          "text": "aping into $ARBSUMMER, this one is different",
+          "timestamp": "2026-08-05T12:00:00.000Z",
+          "author": {
+            "object": "user",
+            "fid": 3621,
+            "username": "horsefacts.eth",
+            "custody_address": "0xAAAA000000000000000000000000000000000001",
+            "verified_addresses": {
+              "eth_addresses": ["0xBBBB000000000000000000000000000000000002"],
+              "sol_addresses": ["9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"],
+              "primary": {
+                "eth_address": "0xBBBB000000000000000000000000000000000002",
+                "sol_address": null
+              }
+            }
+          },
+          "reactions": {"likes_count": 12, "recasts_count": 3}
+        },
+        {
+          "object": "cast",
+          "hash": "0xb2c3d4e5f60718293a4b5c6d7e8f901234567890",
+          "parent_url": "eip155:42161/erc20:0x7c9f4c87d911613fe9ca58b579f737911aad2d43",
+          "root_parent_url": "eip155:42161/erc20:0x7c9f4c87d911613fe9ca58b579f737911aad2d43",
+          "text": "gm from the token page",
+          "timestamp": "2026-08-05T11:30:00.000Z",
+          "author": {
+            "object": "user",
+            "fid": 194,
+            "username": "rish",
+            "custody_address": "0xCCCC000000000000000000000000000000000003",
+            "verified_addresses": {"eth_addresses": [], "sol_addresses": []}
+          },
+          "reactions": {"likes_count": 0, "recasts_count": 0}
+        }
+      ],
+      "next": {"cursor": "cursor-page-2"}
+    }
+  },
+  "page2": {
+    "result": {
+      "casts": [
+        {
+          "object": "cast",
+          "hash": "0xc3d4e5f60718293a4b5c6d7e8f90123456789012",
+          "parent_url": null,
+          "root_parent_url": null,
+          "text": "0x7C9F4C87D911613FE9CA58B579F737911AAD2D43 contract is verified",
+          "timestamp": "2026-08-04T09:00:00.000Z",
+          "author": {"object": "user", "fid": 5, "username": "vitalik"},
+          "reactions": {"likes_count": 1, "recasts_count": 0}
+        },
+        {
+          "object": "cast",
+          "hash": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+          "parent_url": null,
+          "root_parent_url": null,
+          "text": "unrelated cast that mentions nothing",
+          "timestamp": "2026-08-03T09:00:00.000Z",
+          "author": {"object": "user", "fid": 6, "username": "dwr"},
+          "reactions": {"likes_count": 0, "recasts_count": 0}
+        }
+      ],
+      "next": {"cursor": null}
+    }
+  }
+}
