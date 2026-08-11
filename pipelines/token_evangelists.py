@@ -49,6 +49,7 @@ from config.settings import (
     ATTRIBUTION_WINDOW_DAYS,
     BACKFILL_START,
     CHAIN_ARBITRUM,
+    DUNE_CHAIN_NAMES,
     EVANGELIST_MIN_VOLUME_USD,
 )
 from lib import sqlfmt
@@ -180,6 +181,29 @@ def load_token_registry() -> tuple[pd.DataFrame, list[str]]:
     registry["symbol"] = registry["symbol"].fillna("").astype(str).str.strip()
     registry = registry.drop_duplicates(subset=["token_address", "chain_id"], keep="first")
     return registry.reset_index(drop=True), notes
+
+
+def restrict_chains(registry: pd.DataFrame, chains: str, notes: list[str]) -> pd.DataFrame:
+    """Drop candidate tokens on chains the operator did not opt into.
+
+    Volume qualification costs one Dune execution per 500 tokens, and Robinhood
+    contributes ~67k Bankr tokens — 135 executions before a single cast is
+    searched, on a chain where only ~1% of launch wallets belong to a Farcaster
+    account. Arbitrum is the grant's subject, so everything else is opt-in.
+    """
+    wanted = {c.strip().lower() for c in (chains or "").split(",") if c.strip()}
+    if "all" in wanted:
+        return registry
+    keep_ids = {CHAIN_ARBITRUM} | {
+        cid for cid, name in DUNE_CHAIN_NAMES.items()
+        if name in wanted or str(cid) in wanted
+    }
+    dropped = registry[~registry["chain_id"].isin(keep_ids)]
+    for chain_id, count in dropped["chain_id"].value_counts().items():
+        name = DUNE_CHAIN_NAMES.get(int(chain_id), str(chain_id))
+        logger.info("chain %s: %d candidate tokens skipped (--chains %s to include)", name, count, name)
+        notes.append(f"chain {name} skipped ({count} candidate tokens); re-run with --chains {name}")
+    return registry[registry["chain_id"].isin(keep_ids)].reset_index(drop=True)
 
 
 # --- volume qualification ------------------------------------------------
@@ -892,6 +916,7 @@ def run(window, args) -> dict:
 
     registry, registry_notes = load_token_registry()
     notes.extend(registry_notes)
+    registry = restrict_chains(registry, args.chains, notes)
     tokens = select_tokens(runner, registry, args, notes)
 
     params = {
@@ -1099,6 +1124,15 @@ def main(argv=None) -> int:
         "--reaction-types",
         default="likes,recasts",
         help="Neynar reaction types counted as engagement (default likes,recasts).",
+    )
+    parser.add_argument(
+        "--chains",
+        default="",
+        help=(
+            "Comma-separated non-Arbitrum chains to qualify tokens on, or 'all'. "
+            "Arbitrum always runs. Robinhood is off by default: ~67k Bankr tokens "
+            "cost ~135 Dune executions before any cast is searched."
+        ),
     )
     args = parser.parse_args(argv)
     setup_logging(args.log_level)
