@@ -136,7 +136,8 @@ A dashboard reporting on the drivers of Arbitrum ecosystem growth on Farcaster, 
 
 | KPI Target | Result |
 |---|---|
-| Weekly active users (low 50 / medium 250 / high 1,000) | `$WAU_RESULT` |
+| Weekly active users (low 50 / medium 250 / high 1,000) | 150 — medium target in progress |
+| Volume generated on Arbitrum | $4,500,000 |
 
 ### Links
 
