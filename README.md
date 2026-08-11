@@ -327,6 +327,35 @@ duplicating it. Current shape of the graph: 565 `deployer` + 140 `admin`
 DEPLOYED edges for Clanker, 337 `deployer` + 223 `fee_recipient` for a Bankr
 window of 337 tokens.
 
+### One wallet, several accounts — read this before writing a query
+
+**25,394 `Wallet` nodes are claimed by more than one `WarpcastAccount`, and one
+is claimed by 98.** Farcaster does not stop two accounts verifying the same
+address, and custody addresses add more of the same.
+
+Two consequences, both of which have already produced wrong-looking numbers:
+
+1. **Traversals fan out.** `(:WarpcastAccount)-[:ACCOUNT]->(:Wallet)-[:DEPLOYED]->(:Contract)`
+   emits one row per *path*, so an account with three wallets and ten contracts
+   yields thirty rows and the same username repeats. Any per-account aggregate
+   over wallets needs `count(DISTINCT ...)` or a `WITH DISTINCT`, or it
+   overstates — silently, and plausibly.
+2. **A wallet's metric belongs to the wallet, not to one person.** The wallet
+   holding $177.9M of Hyperliquid volume is verified by two separate accounts.
+   Summing `USED.volumeUsd` per account double-counts it; summing per `Wallet`
+   does not. The $1.02B lifetime-volume figure is computed per wallet, and that
+   is the honest way to state it.
+
+```cypher
+// wrong: one row per path, counts repeat
+MATCH (a:WarpcastAccount)-[:ACCOUNT]->(w:Wallet)-[:DEPLOYED]->(c:Contract)
+RETURN a.username, count(c)
+
+// right
+MATCH (a:WarpcastAccount)-[:ACCOUNT]->(w:Wallet)-[:DEPLOYED]->(c:Contract)
+RETURN a.username, count(DISTINCT c)
+```
+
 ---
 
 ## Operations
@@ -438,6 +467,38 @@ edit-and-rerun loop is free until the SQL actually changes. `make clean` drops i
   `--max-holdings-chunks` Dune executions, instead of quietly spending a fortune.
 * `token_evangelists` gates on token volume and caps `--max-tokens` (default 25),
   because its cost scales with Neynar calls per token.
+
+### The two flags that decide what a backfill costs
+
+Both default to the cheap setting. Both were added after a default run exhausted
+a billing cycle's Dune budget without producing a row.
+
+* **`--chains`** (`token_buyers`, `token_evangelists`). Arbitrum always runs;
+  every other chain is opt-in. Robinhood carries ~67k Bankr tokens, so including
+  it costs ~135 Dune executions before a single cast is searched — and buys
+  almost nothing, because only ~1% of Bankr launch wallets belong to a Farcaster
+  account. `--chains robinhood` or `--chains all` when you want it anyway.
+* **`--wallet-source`** (`popular_tokens`). `linked_wallets` (default) joins
+  against all ~4.7M Farcaster addresses: full coverage, but every leg must either
+  scan the chain and filter locally or chunk into thousands of queries.
+  `arb_cohort` joins against the ~30k wallets already known to be Arbitrum-active,
+  which makes every leg restrictable and is what the current numbers were built
+  with. The narrowing is real and recorded on the manifest: a Farcaster user who
+  holds ARB but has never deployed, launched or bought anything is not counted.
+
+A caution learned the expensive way: **Dune bills on data scanned, not rows
+returned.** Restricting a full-history aggregate to a small wallet set shrinks
+the result a thousandfold and barely touches the cost. Narrowing the *scan* —
+a shorter window, a partitioned column, fewer tables — is what actually saves
+money.
+
+Two separate Dune caps can stop a run, and they fail differently:
+
+| symptom | cap | fix |
+|---|---|---|
+| `402 ... datapoint limit per billing cycle` | cycle datapoint budget | raise it in subscription settings |
+| `FAILED_TYPE_RESOURCES_CAP_REACHED` | per-query credit cap | raise it; one holdings query costs ~2 credits |
+| `402 Max number of private queries reached` | saved-query allowance | already handled — `DuneRunner` reuses one scratch query |
 
 ---
 
